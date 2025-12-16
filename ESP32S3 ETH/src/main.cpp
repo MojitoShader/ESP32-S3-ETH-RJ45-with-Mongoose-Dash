@@ -68,46 +68,53 @@ void loop() {
       // Header-Ende erreicht?
       if (c == '\n' && currentLineIsBlank) {
 
-        // --- 1) Button-Auswertung wie bisher ---
-        if (request.indexOf("GET /?press=1") >= 0 && millis() - lastButtonPress > 100) {
+        // --- 1) Button-Auswertung: Nur in der ersten Zeile ---
+        String firstLine = request.substring(0, request.indexOf('\n'));
+        if (firstLine.indexOf("GET /?press=1") >= 0 && millis() - lastButtonPress > 1000) {
           Serial.println("Button wurde gedrueckt!");
           lastButtonPress = millis();
         }
 
-        // --- 2) Textfeld-Auswertung: msg=... ---
-        int msgPos = request.indexOf("msg=");
-        if (msgPos >= 0 && millis() - lastMsgTime > 500) {
-          // Bis zum Leerzeichen (Ende der Request-Zeile) lesen
-          int endPos = request.indexOf(' ', msgPos);
-          if (endPos < 0) endPos = request.length();
-          String rawMsg = request.substring(msgPos + 4, endPos); // nach "msg="
+        // --- 2) Textfeld-Auswertung: msg= aus der ersten Zeile ---
+        int queryStart = firstLine.indexOf('?');
+        if (queryStart >= 0) {
+          int queryEnd = firstLine.indexOf(' ', queryStart);
+          if (queryEnd < 0) queryEnd = firstLine.length();
+          String query = firstLine.substring(queryStart + 1, queryEnd);
+          
+          int msgPos = query.indexOf("msg=");
+          if (msgPos >= 0 && millis() - lastMsgTime > 1000) {
+            int endPos = query.indexOf('&', msgPos);
+            if (endPos < 0) endPos = query.length();
+            String rawMsg = query.substring(msgPos + 4, endPos);
 
-          // Primitive URL-Decode: '+' -> ' ', %20 usw.
-          String decoded = "";
-          for (int i = 0; i < (int)rawMsg.length(); i++) {
-            char ch = rawMsg[i];
-            if (ch == '+') {
-              decoded += ' ';
-            } else if (ch == '%' && i + 2 < (int)rawMsg.length()) {
-              char h1 = rawMsg[i + 1];
-              char h2 = rawMsg[i + 2];
-              int v = 0;
-              if (h1 >= '0' && h1 <= '9') v += (h1 - '0') << 4;
-              else if (h1 >= 'A' && h1 <= 'F') v += (h1 - 'A' + 10) << 4;
-              else if (h1 >= 'a' && h1 <= 'f') v += (h1 - 'a' + 10) << 4;
-              if (h2 >= '0' && h2 <= '9') v += (h2 - '0');
-              else if (h2 >= 'A' && h2 <= 'F') v += (h2 - 'A' + 10);
-              else if (h2 >= 'a' && h2 <= 'f') v += (h2 - 'a' + 10);
-              decoded += (char)v;
-              i += 2; // zwei Hex-Zeichen überspringen
-            } else {
-              decoded += ch;
+            // Primitive URL-Decode: '+' -> ' ', %20 usw.
+            String decoded = "";
+            for (int i = 0; i < (int)rawMsg.length(); i++) {
+              char ch = rawMsg[i];
+              if (ch == '+') {
+                decoded += ' ';
+              } else if (ch == '%' && i + 2 < (int)rawMsg.length()) {
+                char h1 = rawMsg[i + 1];
+                char h2 = rawMsg[i + 2];
+                int v = 0;
+                if (h1 >= '0' && h1 <= '9') v += (h1 - '0') << 4;
+                else if (h1 >= 'A' && h1 <= 'F') v += (h1 - 'A' + 10) << 4;
+                else if (h1 >= 'a' && h1 <= 'f') v += (h1 - 'a' + 10) << 4;
+                if (h2 >= '0' && h2 <= '9') v += (h2 - '0');
+                else if (h2 >= 'A' && h2 <= 'F') v += (h2 - 'A' + 10);
+                else if (h2 >= 'a' && h2 <= 'f') v += (h2 - 'a' + 10);
+                decoded += (char)v;
+                i += 2; // zwei Hex-Zeichen überspringen
+              } else {
+                decoded += ch;
+              }
             }
-          }
 
-          Serial.print("Nachricht von Web: ");
-          Serial.println(decoded);
-          lastMsgTime = millis();
+            Serial.print("Nachricht von Web: ");
+            Serial.println(decoded);
+            lastMsgTime = millis();
+          }
         }
 
         // --- HTTP-Antwort (siehe Abschnitt 1) ---
