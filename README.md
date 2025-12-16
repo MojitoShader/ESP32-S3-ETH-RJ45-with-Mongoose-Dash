@@ -1,9 +1,15 @@
 // --- W5500 Pins laut Board-Pinout ---
+
 #define ETH_MOSI  11
+
 #define ETH_MISO  12
+
 #define ETH_SCK   13
+
 #define ETH_CS    14
+
 #define ETH_RST   9
+
 #define ETH_INT   10   // optional
 
 Using this microcontroller:
