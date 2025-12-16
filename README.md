@@ -1,5 +1,5 @@
 ## Lizenz
-Dieses Projekt steht unter der [Creative Commons Attribution-NonCommercial 4.0 International License](https://creativecommons.org/licenses/by-nc/4.0/).# ESP32-S3-ETH-RJ45-with-Mongoose-Dash
+Dieses Projekt steht unter der [MIT License](https://creativecommons.org/licenses/by-nc/4.0/).# ESP32-S3-ETH-RJ45-with-Mongoose-Dash
 
 Dieses Projekt implementiert einen einfachen Webserver auf einem ESP32-S3 Mikrocontroller mit einem W5500 Ethernet-Shield. Der Server hostet eine Webseite mit einem Button und einem Textfeld, die Serial-Ausgaben auf dem ESP32 auslösen.
 
@@ -9,15 +9,15 @@ Dieses Projekt implementiert einen einfachen Webserver auf einem ESP32-S3 Mikroc
 - **Mikrocontroller:** ESP32-S3 (240 MHz, 8 MB Flash, 320 KB RAM)
 - **Ethernet-Modul:** Integrierter W5500-Chip (SPI-basiert, RJ45-Anschluss für Ethernet)
 - **Anschlüsse:** USB-C für Stromversorgung und Programmierung
-- **Stromversorgung:** Über USB-C (5V)
+- **Stromversorgung:** Über USB-C (5V) / Oder POE
 - **Pinbelegung für W5500:**
   - MOSI: GPIO 11
-  - MISO: GPIO 13
-  - SCK: GPIO 12
+  - MISO: GPIO 12
+  - SCK: GPIO 13
   - CS: GPIO 14
   - RST: GPIO 9
-  - INT: GPIO 10 (optional)
-
+  - INT: GPIO 10
+  
 ### Bilder
 ![Board](https://github.com/user-attachments/assets/3f4dc448-927f-484f-8d96-ed968148da22)
 ![Pinout](https://github.com/user-attachments/assets/8f5c0606-4138-4296-b900-de70891d49a0)
@@ -95,7 +95,4 @@ Dieses Projekt implementiert einen einfachen Webserver auf einem ESP32-S3 Mikroc
    ```
 
 6. **Testen:** Öffne Browser zu `http://192.168.1.177`, drücke Button oder sende Text – Serial-Ausgaben erscheinen.
-
-## Lizenz
-[LICENSE](LICENSE) (füge entsprechende Lizenz hinzu, z. B. MIT).
 
